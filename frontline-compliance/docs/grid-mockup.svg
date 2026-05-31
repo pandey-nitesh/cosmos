@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="430" font-family="system-ui, sans-serif">
+  <rect width="900" height="430" fill="#0f172a"/>
+  <text x="28" y="40" fill="#e2e8f0" font-size="22" font-weight="700">🏗️ Frontline</text>
+  <text x="28" y="62" fill="#94a3b8" font-size="13">Multi-jurisdiction compliance for Front Range trades contractors · running on Cloudflare</text>
+  <text x="28" y="96" fill="#94a3b8" font-size="13">Business: Summit Electric LLC   (trade: electrical)</text>
+
+  <!-- summary cards -->
+  <g>
+    <rect x="28" y="112" width="120" height="60" rx="10" fill="#1e293b" stroke="#334155"/>
+    <text x="44" y="148" fill="#22c55e" font-size="26" font-weight="700">1</text>
+    <text x="44" y="164" fill="#94a3b8" font-size="11">ELIGIBLE</text>
+    <rect x="160" y="112" width="120" height="60" rx="10" fill="#1e293b" stroke="#334155"/>
+    <text x="176" y="148" fill="#eab308" font-size="26" font-weight="700">0</text>
+    <text x="176" y="164" fill="#94a3b8" font-size="11">ACTION SOON</text>
+    <rect x="292" y="112" width="120" height="60" rx="10" fill="#1e293b" stroke="#334155"/>
+    <text x="308" y="148" fill="#ef4444" font-size="26" font-weight="700">3</text>
+    <text x="308" y="164" fill="#94a3b8" font-size="11">BLOCKED</text>
+  </g>
+
+  <text x="28" y="206" fill="#94a3b8" font-size="13" font-weight="700">ELIGIBLE TO BID?</text>
+
+  <!-- Denver: eligible -->
+  <rect x="28" y="218" width="844" height="46" rx="10" fill="#1e293b" stroke="#334155"/>
+  <rect x="28" y="218" width="5" height="46" fill="#22c55e"/>
+  <text x="48" y="247" fill="#e2e8f0" font-size="16" font-weight="600">Denver</text>
+  <rect x="130" y="232" width="70" height="20" rx="10" fill="#16361f"/>
+  <text x="142" y="246" fill="#22c55e" font-size="11" font-weight="700">ELIGIBLE</text>
+
+  <!-- Aurora: blocked -->
+  <rect x="28" y="272" width="844" height="64" rx="10" fill="#1e293b" stroke="#334155"/>
+  <rect x="28" y="272" width="5" height="64" fill="#ef4444"/>
+  <text x="48" y="297" fill="#e2e8f0" font-size="16" font-weight="600">Aurora</text>
+  <rect x="130" y="282" width="64" height="20" rx="10" fill="#3a1717"/>
+  <text x="140" y="296" fill="#ef4444" font-size="11" font-weight="700">BLOCKED</text>
+  <text x="48" y="322" fill="#fca5a5" font-size="12">⛔ No active electrical license for Aurora.   </text>
+  <text x="360" y="322" fill="#22c55e" font-size="12">→ Obtain an Aurora electrical license (class Master).</text>
+
+  <!-- Boulder: blocked -->
+  <rect x="28" y="344" width="844" height="64" rx="10" fill="#1e293b" stroke="#334155"/>
+  <rect x="28" y="344" width="5" height="64" fill="#ef4444"/>
+  <text x="48" y="369" fill="#e2e8f0" font-size="16" font-weight="600">Boulder</text>
+  <rect x="138" y="354" width="64" height="20" rx="10" fill="#3a1717"/>
+  <text x="148" y="368" fill="#ef4444" font-size="11" font-weight="700">BLOCKED</text>
+  <text x="48" y="394" fill="#fca5a5" font-size="12">⛔ No active electrical license for Boulder.   </text>
+  <text x="360" y="394" fill="#22c55e" font-size="12">→ Obtain a Boulder electrical license (class Master).</text>
+</svg>

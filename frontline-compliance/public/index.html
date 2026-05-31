@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Frontline — Contractor Compliance Command Center</title>
+    <style>
+      :root {
+        --bg: #0f172a; --panel: #1e293b; --ink: #e2e8f0; --muted: #94a3b8;
+        --green: #22c55e; --yellow: #eab308; --red: #ef4444; --blue: #38bdf8;
+        --line: #334155;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font: 15px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+      header { padding: 20px 28px; border-bottom: 1px solid var(--line); display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+      h1 { font-size: 20px; margin: 0; }
+      .tag { color: var(--muted); font-size: 13px; }
+      main { padding: 24px 28px; max-width: 1100px; margin: 0 auto; }
+      .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+      select, button { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; font-size: 14px; }
+      button { cursor: pointer; }
+      button.primary { background: var(--blue); color: #042; border-color: var(--blue); font-weight: 600; }
+      .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+      .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; min-width: 120px; }
+      .card .n { font-size: 26px; font-weight: 700; }
+      .card .l { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+      .grid { display: grid; gap: 12px; }
+      .jur { background: var(--panel); border: 1px solid var(--line); border-left-width: 5px; border-radius: 12px; padding: 14px 18px; }
+      .jur.eligible { border-left-color: var(--green); }
+      .jur.eligible_via_reciprocity { border-left-color: var(--blue); }
+      .jur.expiring { border-left-color: var(--yellow); }
+      .jur.blocked { border-left-color: var(--red); }
+      .jur h3 { margin: 0 0 4px; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+      .pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; }
+      .pill.eligible { background: rgba(34,197,94,.18); color: var(--green); }
+      .pill.eligible_via_reciprocity { background: rgba(56,189,248,.18); color: var(--blue); }
+      .pill.expiring { background: rgba(234,179,8,.18); color: var(--yellow); }
+      .pill.blocked { background: rgba(239,68,68,.18); color: var(--red); }
+      .blocker { margin-top: 8px; padding: 8px 10px; background: rgba(239,68,68,.08); border-radius: 8px; font-size: 13px; }
+      .blocker .fix { color: var(--green); }
+      .soon { margin-top: 8px; font-size: 13px; color: var(--yellow); }
+      .src { margin-top: 8px; font-size: 11px; color: var(--muted); }
+      .src a { color: var(--muted); }
+      .disclaimer { margin-top: 26px; font-size: 12px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 14px; }
+      #log { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px; background: #0b1220; border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin-top: 12px; display: none; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🏗️ Frontline</h1>
+      <span class="tag">Multi-jurisdiction license, insurance &amp; permit compliance for Front Range trades contractors · running on Cloudflare</span>
+    </header>
+    <main>
+      <div class="row">
+        <label for="biz" class="tag">Business:</label>
+        <select id="biz"></select>
+        <span id="trade" class="tag"></span>
+        <button id="scan" class="primary">▶ Run alert scan now</button>
+      </div>
+
+      <div class="cards" id="cards"></div>
+      <div id="lapses"></div>
+      <h2 style="font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Eligible to bid?</h2>
+      <div class="grid" id="grid"></div>
+      <p class="tag" style="margin-top:6px;">The alert scan runs across <em>all</em> businesses (exactly as the daily Cloudflare Cron does).</p>
+      <pre id="log"></pre>
+
+      <p class="disclaimer">
+        ⚠️ Jurisdiction rules shown here are illustrative and simplified for this reference build. Each city card links to its
+        source and shows when the rule was last verified — always confirm directly with the jurisdiction before bidding.
+      </p>
+    </main>
+
+    <script>
+      const $ = (s) => document.querySelector(s);
+      async function loadBusinesses() {
+        const list = await (await fetch('/api/businesses')).json();
+        const sel = $('#biz');
+        sel.innerHTML = list.map((b) => `<option value="${b.id}">${b.name}</option>`).join('');
+        sel.onchange = () => render(sel.value);
+        if (list.length) render(list[0].id);
+      }
+      function statusLabel(s) {
+        return { eligible: 'Eligible', eligible_via_reciprocity: 'Eligible (reciprocity)', expiring: 'Action soon', blocked: 'Blocked' }[s] || s;
+      }
+      async function render(id) {
+        const data = await (await fetch(`/api/businesses/${id}/compliance`)).json();
+        $('#trade').textContent = `trade: ${data.business.trade}`;
+        const s = data.summary;
+        $('#cards').innerHTML = `
+          <div class="card"><div class="n" style="color:var(--green)">${s.eligible}</div><div class="l">Eligible</div></div>
+          <div class="card"><div class="n" style="color:var(--yellow)">${s.expiringSoon}</div><div class="l">Action soon</div></div>
+          <div class="card"><div class="n" style="color:var(--red)">${s.blocked}</div><div class="l">Blocked</div></div>
+          <div class="card"><div class="n">${s.total}</div><div class="l">Cities</div></div>`;
+        $('#grid').innerHTML = data.grid.map(cell).join('');
+        // "What lapses next" rollup across ALL cities — surfaced even when a city is blocked.
+        const lapses = $('#lapses');
+        if (data.upcoming && data.upcoming.length) {
+          lapses.innerHTML =
+            `<div class="jur ${data.upcoming[0].severity === 'critical' ? 'expiring' : ''}" style="border-left-color:var(--yellow)">
+               <h3>⏳ What lapses next</h3>` +
+            data.upcoming.map((u) =>
+              `<div class="soon">${u.label} — expires in ${u.daysUntil} day(s) (${u.expiresOn})</div>`).join('') +
+            `</div>`;
+        } else {
+          lapses.innerHTML = '';
+        }
+      }
+      function cell(g) {
+        const blockers = g.blockers.map((b) =>
+          `<div class="blocker">⛔ ${b.detail}<br/><span class="fix">→ ${b.remedy}</span></div>`).join('');
+        const soon = g.upcoming.filter((u) => u.severity === 'critical')
+          .map((u) => `<div class="soon">⏳ ${u.label} expires in ${u.daysUntil} day(s) (${u.expiresOn})</div>`).join('');
+        const via = g.via ? `<div class="soon" style="color:var(--blue)">↔ ${g.via}</div>` : '';
+        const src = g.source_url ? `<div class="src">Rule source: <a href="${g.source_url}" target="_blank">${g.jurisdictionName}</a> · verified ${g.verified_on || 'n/a'}</div>` : '';
+        return `<div class="jur ${g.status}">
+          <h3>${g.jurisdictionName} <span class="pill ${g.status}">${statusLabel(g.status)}</span></h3>
+          ${via}${blockers}${soon}${src}</div>`;
+      }
+      $('#scan').onclick = async () => {
+        const r = await (await fetch('/api/scan', { method: 'POST' })).json();
+        const log = $('#log');
+        log.style.display = 'block';
+        log.textContent = `Enqueued ${r.enqueued} alert(s) to the Cloudflare Queue:\n\n` +
+          r.jobs.map((j) => `[${j.severity.toUpperCase()}] ${j.message}`).join('\n') +
+          `\n\n(Each is persisted to D1 and delivered via the queue consumer's ConsoleNotifier — check 'wrangler dev' logs.)`;
+      };
+      loadBusinesses();
+    </script>
+  </body>
+</html>

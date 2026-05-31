@@ -1,0 +1,27 @@
+{
+  "name": "frontline-compliance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-jurisdiction license, insurance & permit compliance command center for Front Range trades contractors — built on Cloudflare.",
+  "type": "module",
+  "scripts": {
+    "demo": "npm run db:migrate && npm run dev",
+    "setup": "npm install && npm run db:migrate",
+    "db:migrate": "wrangler d1 migrations apply frontline-db --local",
+    "db:reset": "rm -rf .wrangler/state && npm run db:migrate",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.9",
+    "wrangler": "^3.114.0"
+  }
+}

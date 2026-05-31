@@ -1,0 +1,56 @@
+{
+  // Frontline — Cloudflare Worker configuration.
+  // Demonstrates the full Cloudflare stack: Workers + D1 + KV + R2 + Queues + Cron + Assets.
+  // For LOCAL development none of the cloud IDs below need to be real — `wrangler dev`
+  // simulates D1/KV/R2/Queues locally. The placeholder IDs are only used on `wrangler deploy`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "frontline-compliance",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Static dashboard (the eligibility grid) served from /public.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+
+  // Relational store: businesses, people, jurisdictions, licenses, insurance, alerts.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "frontline-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Cached jurisdiction-rule lookups.
+  "kv_namespaces": [
+    {
+      "binding": "RULES_CACHE",
+      "id": "00000000000000000000000000000000"
+    }
+  ],
+
+  // Document storage for license & COI PDFs.
+  "r2_buckets": [
+    {
+      "binding": "DOCS",
+      "bucket_name": "frontline-docs"
+    }
+  ],
+
+  // Alert fan-out. This Worker is both producer and consumer.
+  "queues": {
+    "producers": [{ "binding": "ALERT_QUEUE", "queue": "frontline-alerts" }],
+    "consumers": [{ "queue": "frontline-alerts", "max_batch_size": 10, "max_batch_timeout": 5 }]
+  },
+
+  // Daily deadline scan at 13:00 UTC (~7am Denver).
+  "triggers": {
+    "crons": ["0 13 * * *"]
+  },
+
+  "observability": { "enabled": true }
+}
