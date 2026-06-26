@@ -1,0 +1,15 @@
+[
+{"type":"text","x":300,"y":-100,"text":"Go Migration Roadmap — incremental, rollback-able at every step","fontSize":25},
+{"type":"rectangle","id":"p0","x":30,"y":40,"width":270,"height":360,"backgroundColor":"#a5d8ff","fillStyle":"solid","label":{"text":"PHASE 0 Foundations & test harness: openc3-go-lib, Store/Topic wrapper (db_shard parity), S3 + AnyCable clients, golden-master fixtures. Pure additive — no prod traffic"}},
+{"type":"rectangle","id":"p1","x":320,"y":40,"width":270,"height":360,"backgroundColor":"#d0bfff","fillStyle":"solid","label":{"text":"PHASE 1 Compute core (C-ext win): structure.c/binary marshalling, crc + polynomial conv, burst sync + config lexer, Packet/Structure types. Fuzz + bench vs C ext; optional FFI back into Ruby"}},
+{"type":"rectangle","id":"p2","x":610,"y":40,"width":270,"height":360,"backgroundColor":"#b2f2bb","fillStyle":"solid","label":{"text":"PHASE 2 First Go MS on live bus: Interface MS (goroutines), Streams (TCP/UDP/serial/MQTT/HTTP), protocol chain, Decom MS + models, S3 logs + QuestDB. Per-target cutover; flip config to roll back"}},
+{"type":"rectangle","id":"p3","x":900,"y":40,"width":270,"height":360,"backgroundColor":"#ffd8a8","fillStyle":"solid","label":{"text":"PHASE 3 Operator & REST APIs: Go operator/supervisor, cmd-tlm-api REST, config (text DSL + XTCE), script-runner REST front (execution stays Ruby). Shadow-test then flip routes endpoint-by-endpoint"}},
+{"type":"arrow","startId":"p0","endId":"p1"},{"type":"arrow","startId":"p1","endId":"p2"},{"type":"arrow","startId":"p2","endId":"p3"},
+{"type":"rectangle","id":"v0","x":30,"y":440,"width":270,"height":75,"backgroundColor":"#fff3bf","fillStyle":"solid","label":{"text":"~2-3 person-months (P0+P1)"}},
+{"type":"rectangle","id":"v1","x":320,"y":440,"width":270,"height":75,"backgroundColor":"#fff3bf","fillStyle":"solid","label":{"text":"Highest ROI / lowest risk; ships even if rest stalls"}},
+{"type":"rectangle","id":"v2","x":610,"y":440,"width":270,"height":75,"backgroundColor":"#fff3bf","fillStyle":"solid","label":{"text":"~3-4 person-months incl. production cutover"}},
+{"type":"rectangle","id":"v3","x":900,"y":440,"width":270,"height":75,"backgroundColor":"#fff3bf","fillStyle":"solid","label":{"text":"~4-6 person-months; Ruby footprint now small"}},
+{"type":"rectangle","id":"keep","x":30,"y":555,"width":560,"height":80,"backgroundColor":"#ffc9c9","fillStyle":"solid","label":{"text":"KEEP (never ported): Vue SPA, AnyCable, Traefik, Valkey, versitygw, QuestDB, Ruby/Python script instrumentation"}},
+{"type":"rectangle","id":"retire","x":610,"y":555,"width":560,"height":80,"backgroundColor":"#eebefa","fillStyle":"solid","label":{"text":"RETIRE over time: Python parallel core lib (~46k LOC) — Go becomes single non-Ruby runtime (3 impls -> 2)"}},
+{"type":"text","x":300,"y":665,"text":"Realistic total: a 9-15 month incremental program, value delivered at the end of each phase","fontSize":18}
+]

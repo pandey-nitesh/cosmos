@@ -1,0 +1,21 @@
+[
+{"type":"text","x":230,"y":-95,"text":"Target Architecture — Go strangler-fig (Go & Ruby share one Valkey bus)","fontSize":25},
+{"type":"rectangle","id":"spa2","x":380,"y":-30,"width":440,"height":60,"backgroundColor":"#a5d8ff","fillStyle":"solid","label":{"text":"Vue 3 + Vuetify SPA (UNCHANGED)"}},
+{"type":"rectangle","id":"trf2","x":380,"y":90,"width":440,"height":50,"backgroundColor":"#fff3bf","fillStyle":"solid","label":{"text":"Traefik (UNCHANGED) — same /openc3-api/* routes"}},
+{"type":"arrow","startId":"spa2","endId":"trf2"},
+{"type":"rectangle","id":"gcta","x":40,"y":210,"width":330,"height":90,"backgroundColor":"#b2f2bb","fillStyle":"solid","label":{"text":"cmd-tlm-api -> GO (Phase 3, route-by-route cutover)"}},
+{"type":"rectangle","id":"rsra","x":410,"y":210,"width":330,"height":90,"backgroundColor":"#ffc9c9","fillStyle":"solid","label":{"text":"script-runner-api REST -> Go; execution stays RUBY/PYTHON"}},
+{"type":"rectangle","id":"buk2","x":780,"y":210,"width":360,"height":90,"backgroundColor":"#fff3bf","fillStyle":"solid","label":{"text":"versitygw S3 + QuestDB + AnyCable (UNCHANGED)"}},
+{"type":"arrow","startId":"trf2","endId":"gcta"},{"type":"arrow","startId":"trf2","endId":"rsra"},{"type":"arrow","startId":"trf2","endId":"buk2"},
+{"type":"rectangle","id":"bus2","x":40,"y":360,"width":1100,"height":95,"backgroundColor":"#ffd8a8","fillStyle":"solid","label":{"text":"VALKEY (Redis) — IMMUTABLE CONTRACT: identical topics, db_shard, CVT/model layout; Go and Ruby interoperate byte-for-byte"}},
+{"type":"arrow","startId":"gcta","endId":"bus2"},{"type":"arrow","startId":"rsra","endId":"bus2"},
+{"type":"rectangle","id":"gopr","x":40,"y":500,"width":300,"height":65,"backgroundColor":"#b2f2bb","fillStyle":"solid","label":{"text":"operator -> GO supervisor (Phase 3)"}},
+{"type":"rectangle","id":"gifm","x":40,"y":610,"width":255,"height":100,"backgroundColor":"#b2f2bb","fillStyle":"solid","label":{"text":"Interface MS -> GO (Phase 2, per-target)"}},
+{"type":"rectangle","id":"gdcm","x":320,"y":610,"width":255,"height":100,"backgroundColor":"#b2f2bb","fillStyle":"solid","label":{"text":"Decom MS -> GO (Phase 2)"}},
+{"type":"rectangle","id":"rlgm","x":600,"y":610,"width":230,"height":100,"backgroundColor":"#ffe3c9","fillStyle":"solid","label":{"text":"Log / Cleanup MS (Go later)"}},
+{"type":"rectangle","id":"rharn","x":860,"y":610,"width":280,"height":100,"backgroundColor":"#ffc9c9","fillStyle":"solid","label":{"text":"Ruby/Python script harness KEEP (line instrumentation)"}},
+{"type":"arrow","startId":"gifm","endId":"bus2"},{"type":"arrow","startId":"gdcm","endId":"bus2"},{"type":"arrow","startId":"rharn","endId":"bus2"},
+{"type":"rectangle","id":"golib","x":355,"y":735,"width":470,"height":75,"backgroundColor":"#d3f9d8","fillStyle":"solid","label":{"text":"openc3-go-lib (Phase 0/1): packets + binary marshalling, CRC, config/XTCE parser, conversions, Store/Topic wrapper"}},
+{"type":"arrow","startId":"golib","endId":"gifm"},{"type":"arrow","startId":"golib","endId":"gdcm"},
+{"type":"text","x":870,"y":740,"text":"GREEN = ported to Go; RED = kept Ruby/Python; YELLOW = unchanged infra","fontSize":16}
+]
